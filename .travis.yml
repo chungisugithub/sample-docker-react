@@ -1,0 +1,18 @@
+sudo: required
+services: 
+  - docker
+before_install: 
+  - docker build -t spaceboy/sample-docker-react -f Dockerfile.dev . 
+script:
+  - docker run -e CI=true spaceboy/sample-docker-react npm run test -- --coverage --watchAll=false
+deploy:  
+  provider: elasticbeanstalk  
+  region: "ap-northeast-2" ### AWS region of your choice
+  app: "sample-docker-react" ### Your EB App name
+  env: "Sampledockerreact-env" ### Your EB App environment name
+  bucket_name: "elasticbeanstalk-ap-northeast-2-908885700562" ### S3 bucket name
+  bucket_path: "sample-docker-react" ### S3 folder name under S3 bucket above
+  on:
+    branch: master
+  access_key_id: "$AWS_ACCESS_KEY"
+  secret_access_key: "$AWS_SECRET_KEY"
